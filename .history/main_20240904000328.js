@@ -105,7 +105,7 @@ function itemNaListaComprado(itemCriado) {
         const checkbox = evento.currentTarget.querySelector('input[type="checkbox"]');
         const valorDoItem = evento.currentTarget.closest('[data-value]').getAttribute('data-value');
         checkbox.checked = !checkbox.checked;
-        itensParaComprar[valorDoItem].checar = checkbox.checked;
+        itensParaComprar[valorDoItem].checar = checkbox;
 
         console.log(itensParaComprar[valorDoItem].checar);
     });

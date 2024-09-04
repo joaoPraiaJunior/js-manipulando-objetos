@@ -16,7 +16,7 @@ function salvarDadosDoFormulario(evento) {
 
     const itemDeCompra = formulario.item.value;
 
-    if (verificaSeItemJaExiste(itemDeCompra)) {
+    if(verificaSeItemJaExiste(itemDeCompra)) {
 
         alert('Item já existe na lista');
         return;
@@ -24,7 +24,6 @@ function salvarDadosDoFormulario(evento) {
 
     const dados = {
         valor: itemDeCompra,
-        checar: false,
     }
 
     itensParaComprar.push(dados);
@@ -44,8 +43,6 @@ function verificaSeItemJaExiste(itemDeCompra) {
 }
 
 function renderizarItens() {
-
-    listaDeItens.innerHTML = '';
 
     itensParaComprar.forEach((item, indice) => {
         const itemCriado = criarItem(item, indice);
@@ -98,16 +95,10 @@ function criarItem(item, indice) {
 }
 
 function itemNaListaComprado(itemCriado) {
-
     const divInputs = itemCriado.querySelector('[data-js="item"]');
-
     divInputs.addEventListener('click', (evento) => {
         const checkbox = evento.currentTarget.querySelector('input[type="checkbox"]');
-        const valorDoItem = evento.currentTarget.closest('[data-value]').getAttribute('data-value');
         checkbox.checked = !checkbox.checked;
-        itensParaComprar[valorDoItem].checar = checkbox.checked;
-
-        console.log(itensParaComprar[valorDoItem].checar);
     });
 }
 

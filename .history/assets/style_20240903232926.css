@@ -28,19 +28,12 @@ input:disabled {
     border: none;
     background: none;
     color: black;
-}
-
-div[data-js="item"] {
-    cursor: pointer;
+    pointer-events: 'auto';
 }
 
 input {
     border: none;
     background: none;
     color: black;
-}
-
-.eventos-ponteiro {
-    pointer-events: none;
 }
 

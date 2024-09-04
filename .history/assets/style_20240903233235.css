@@ -30,17 +30,9 @@ input:disabled {
     color: black;
 }
 
-div[data-js="item"] {
-    cursor: pointer;
-}
-
 input {
     border: none;
     background: none;
     color: black;
-}
-
-.eventos-ponteiro {
-    pointer-events: none;
 }
 

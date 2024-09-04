@@ -28,6 +28,7 @@ input:disabled {
     border: none;
     background: none;
     color: black;
+    cursor: pointer;
 }
 
 div[data-js="item"] {
