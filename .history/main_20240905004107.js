@@ -74,7 +74,7 @@ function criarItem(item, indice) {
     checkbox.id = `checkbox-${indice}`;
     labelCheckBox.setAttribute('for', `checkbox-${indice}`);
     labelCheckBox.classList.add('checkbox');
-    checkbox.classList.add('eventos-ponteiro');
+    checkbox.classList.add('is-clickable');
     labelInput.setAttribute('for', `item-${indice}`);
     input.type = 'text';
     input.id = `item-${indice}`;
@@ -99,26 +99,19 @@ function criarItem(item, indice) {
     return li;
 }
 
-function manipularItemNaLista(evento, acao) {
-    const valorDoItem = obterValorDoItem(evento);
-    acao(valorDoItem);
-    renderizarItens();
-}
-
-function obterValorDoItem(evento) {
-    return evento.currentTarget.closest('[data-value]').getAttribute('data-value');
-}
-
 function itemNaListaComprado(itemCriado) {
 
     const divInputs = itemCriado.querySelector('[data-js="item"]');
 
     divInputs.addEventListener('click', (evento) => {
-        manipularItemNaLista(evento, (valorDoItem) => {
-            const checkbox = evento.currentTarget.querySelector('input[type="checkbox"]');
-            checkbox.checked = !checkbox.checked;
-            itensParaComprar[valorDoItem].checar = checkbox.checked;
-        });
+        console.log(evento.currentTarget);
+        const checkbox = evento.currentTarget.querySelector('input[type="checkbox"]');
+        const valorDoItem = evento.currentTarget.closest('[data-value]').getAttribute('data-value');
+        checkbox.checked = !checkbox.checked;
+        itensParaComprar[valorDoItem].checar = checkbox.checked;
+
+        selecionaListaParaItem(valorDoItem, itemCriado);
+
     });
 }
 
@@ -127,9 +120,10 @@ function deletarItem(itemCriado) {
     const botaoDeletar = itemCriado.querySelector(elementos.botaoDeletar);
 
     botaoDeletar.addEventListener('click', (evento) => {
-        manipularItemNaLista(evento, (valorDoItem) => {
-            itensParaComprar.splice(valorDoItem, 1);
-        });
+        const valorDoItem = evento.target.closest('[data-value]').getAttribute('data-value');
+        itensParaComprar.splice(valorDoItem, 1);
+        renderizarItens();
+        console.log(itensParaComprar);
     });
 }
 
@@ -141,12 +135,14 @@ function selecionaListaParaItem(valorDoItem, itemCriado) {
     if (itensParaComprar[valorDoItem].checar) {
         itensComprados.appendChild(itemCriado);
         inputText.classList.add('itens-comprados');
-        checkbox.checked = true;
-        return;
-    }
+        console.log(itensParaComprar);
+    } else {
 
-    listaDeItens.appendChild(itemCriado);
-    inputText.classList.remove('itens-comprados');
+        listaDeItens.appendChild(itemCriado);
+        inputText.classList.remove('itens-comprados');
+        console.log(itensParaComprar, 'teste');
+
+    }
 }
 
 

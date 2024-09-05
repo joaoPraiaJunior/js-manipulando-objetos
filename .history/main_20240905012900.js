@@ -50,8 +50,6 @@ function renderizarItens() {
         const itemCriado = criarItem(item, indice);
         const valorDoItem = itemCriado.getAttribute('data-value');
         selecionaListaParaItem(valorDoItem, itemCriado)
-        itemNaListaComprado(itemCriado);
-        deletarItem(itemCriado);
     });
 }
 
@@ -96,6 +94,9 @@ function criarItem(item, indice) {
     li.appendChild(divInputs);
     li.appendChild(divBotoes);
 
+    itemNaListaComprado(li);
+    deletarItem(li);
+
     return li;
 }
 
@@ -108,6 +109,7 @@ function manipularItemNaLista(evento, acao) {
 function obterValorDoItem(evento) {
     return evento.currentTarget.closest('[data-value]').getAttribute('data-value');
 }
+
 
 function itemNaListaComprado(itemCriado) {
 
@@ -142,11 +144,13 @@ function selecionaListaParaItem(valorDoItem, itemCriado) {
         itensComprados.appendChild(itemCriado);
         inputText.classList.add('itens-comprados');
         checkbox.checked = true;
+        console.log(itensParaComprar);
         return;
     }
 
     listaDeItens.appendChild(itemCriado);
     inputText.classList.remove('itens-comprados');
+    console.log(itensParaComprar, 'teste');
 }
 
 

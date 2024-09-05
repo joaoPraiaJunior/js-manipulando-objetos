@@ -47,9 +47,15 @@ function renderizarItens() {
     itensComprados.innerHTML = '';
 
     itensParaComprar.forEach((item, indice) => {
+
         const itemCriado = criarItem(item, indice);
-        const valorDoItem = itemCriado.getAttribute('data-value');
-        selecionaListaParaItem(valorDoItem, itemCriado)
+        
+        if (item.checar) {
+            itensComprados.appendChild(itemCriado);
+        } else {
+            listaDeItens.appendChild(itemCriado);
+        }
+
         itemNaListaComprado(itemCriado);
         deletarItem(itemCriado);
     });
@@ -74,7 +80,7 @@ function criarItem(item, indice) {
     checkbox.id = `checkbox-${indice}`;
     labelCheckBox.setAttribute('for', `checkbox-${indice}`);
     labelCheckBox.classList.add('checkbox');
-    checkbox.classList.add('eventos-ponteiro');
+    checkbox.classList.add('is-clickable');
     labelInput.setAttribute('for', `item-${indice}`);
     input.type = 'text';
     input.id = `item-${indice}`;
@@ -99,26 +105,27 @@ function criarItem(item, indice) {
     return li;
 }
 
-function manipularItemNaLista(evento, acao) {
-    const valorDoItem = obterValorDoItem(evento);
-    acao(valorDoItem);
-    renderizarItens();
-}
-
-function obterValorDoItem(evento) {
-    return evento.currentTarget.closest('[data-value]').getAttribute('data-value');
-}
-
 function itemNaListaComprado(itemCriado) {
 
     const divInputs = itemCriado.querySelector('[data-js="item"]');
 
     divInputs.addEventListener('click', (evento) => {
-        manipularItemNaLista(evento, (valorDoItem) => {
-            const checkbox = evento.currentTarget.querySelector('input[type="checkbox"]');
-            checkbox.checked = !checkbox.checked;
-            itensParaComprar[valorDoItem].checar = checkbox.checked;
-        });
+        const checkbox = evento.currentTarget.querySelector('input[type="checkbox"]');
+        const valorDoItem = evento.currentTarget.closest('[data-value]').getAttribute('data-value');
+        const inputText = evento.currentTarget.querySelector('input[type="text"]');
+        checkbox.checked = !checkbox.checked;
+        itensParaComprar[valorDoItem].checar = checkbox.checked;
+
+        if (itensParaComprar[valorDoItem].checar) {
+            itensComprados.appendChild(itemCriado);
+            inputText.classList.add('itens-comprados');
+            console.log(itensParaComprar);
+            return;
+        }
+
+        listaDeItens.appendChild(itemCriado);
+        inputText.classList.remove('itens-comprados');
+        console.log(itensParaComprar);
     });
 }
 
@@ -127,26 +134,11 @@ function deletarItem(itemCriado) {
     const botaoDeletar = itemCriado.querySelector(elementos.botaoDeletar);
 
     botaoDeletar.addEventListener('click', (evento) => {
-        manipularItemNaLista(evento, (valorDoItem) => {
-            itensParaComprar.splice(valorDoItem, 1);
-        });
+        const valorDoItem = evento.target.closest('[data-value]').getAttribute('data-value');
+        itensParaComprar.splice(valorDoItem, 1);
+        renderizarItens();
+        console.log(itensParaComprar);
     });
-}
-
-function selecionaListaParaItem(valorDoItem, itemCriado) {
-
-    const checkbox = itemCriado.querySelector('input[type="checkbox"]');
-    const inputText = itemCriado.querySelector('input[type="text"]');
-
-    if (itensParaComprar[valorDoItem].checar) {
-        itensComprados.appendChild(itemCriado);
-        inputText.classList.add('itens-comprados');
-        checkbox.checked = true;
-        return;
-    }
-
-    listaDeItens.appendChild(itemCriado);
-    inputText.classList.remove('itens-comprados');
 }
 
 

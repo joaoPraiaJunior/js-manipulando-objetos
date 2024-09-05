@@ -50,8 +50,6 @@ function renderizarItens() {
         const itemCriado = criarItem(item, indice);
         const valorDoItem = itemCriado.getAttribute('data-value');
         selecionaListaParaItem(valorDoItem, itemCriado)
-        itemNaListaComprado(itemCriado);
-        deletarItem(itemCriado);
     });
 }
 
@@ -96,17 +94,10 @@ function criarItem(item, indice) {
     li.appendChild(divInputs);
     li.appendChild(divBotoes);
 
+    itemNaListaComprado(li);
+    deletarItem(li);
+
     return li;
-}
-
-function manipularItemNaLista(evento, acao) {
-    const valorDoItem = obterValorDoItem(evento);
-    acao(valorDoItem);
-    renderizarItens();
-}
-
-function obterValorDoItem(evento) {
-    return evento.currentTarget.closest('[data-value]').getAttribute('data-value');
 }
 
 function itemNaListaComprado(itemCriado) {
@@ -114,11 +105,12 @@ function itemNaListaComprado(itemCriado) {
     const divInputs = itemCriado.querySelector('[data-js="item"]');
 
     divInputs.addEventListener('click', (evento) => {
-        manipularItemNaLista(evento, (valorDoItem) => {
-            const checkbox = evento.currentTarget.querySelector('input[type="checkbox"]');
-            checkbox.checked = !checkbox.checked;
-            itensParaComprar[valorDoItem].checar = checkbox.checked;
-        });
+        console.log(evento.currentTarget);
+        const checkbox = evento.currentTarget.querySelector('input[type="checkbox"]');
+        const valorDoItem = evento.currentTarget.closest('[data-value]').getAttribute('data-value');
+
+        selecionaListaParaItem(valorDoItem, itemCriado);
+
     });
 }
 
@@ -127,9 +119,10 @@ function deletarItem(itemCriado) {
     const botaoDeletar = itemCriado.querySelector(elementos.botaoDeletar);
 
     botaoDeletar.addEventListener('click', (evento) => {
-        manipularItemNaLista(evento, (valorDoItem) => {
-            itensParaComprar.splice(valorDoItem, 1);
-        });
+        const valorDoItem = evento.target.closest('[data-value]').getAttribute('data-value');
+        itensParaComprar.splice(valorDoItem, 1);
+        renderizarItens();
+        console.log(itensParaComprar);
     });
 }
 
@@ -142,11 +135,14 @@ function selecionaListaParaItem(valorDoItem, itemCriado) {
         itensComprados.appendChild(itemCriado);
         inputText.classList.add('itens-comprados');
         checkbox.checked = true;
+        itensParaComprar[valorDoItem].checar = !checkbox.checked;
         return;
     }
 
     listaDeItens.appendChild(itemCriado);
     inputText.classList.remove('itens-comprados');
+    checkbox.checked = false;
+    itensParaComprar[valorDoItem].checar = !checkbox.checked;
 }
 
 

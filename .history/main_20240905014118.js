@@ -50,8 +50,6 @@ function renderizarItens() {
         const itemCriado = criarItem(item, indice);
         const valorDoItem = itemCriado.getAttribute('data-value');
         selecionaListaParaItem(valorDoItem, itemCriado)
-        itemNaListaComprado(itemCriado);
-        deletarItem(itemCriado);
     });
 }
 
@@ -95,6 +93,9 @@ function criarItem(item, indice) {
 
     li.appendChild(divInputs);
     li.appendChild(divBotoes);
+
+    itemNaListaComprado(li);
+    deletarItem(li);
 
     return li;
 }
