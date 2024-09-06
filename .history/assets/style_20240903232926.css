@@ -28,26 +28,12 @@ input:disabled {
     border: none;
     background: none;
     color: black;
-}
-
-div[data-js="item"] {
-    display: flex;
-    align-items: center;
-    cursor: pointer;
-}
-
-span[data-js="texto"] {
-    font-weight: 600;
-    color: #000;
-    width: 600px;
+    pointer-events: 'auto';
 }
 
 input {
     border: none;
     background: none;
-}
-
-.eventos-ponteiro {
-    pointer-events: none;
+    color: black;
 }
 

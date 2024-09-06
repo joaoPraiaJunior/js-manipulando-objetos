@@ -28,23 +28,17 @@ input:disabled {
     border: none;
     background: none;
     color: black;
-}
-
-div[data-js="item"] {
-    display: flex;
-    align-items: center;
     cursor: pointer;
 }
 
-span[data-js="texto"] {
-    font-weight: 600;
-    color: #000;
-    width: 600px;
+div[data-js="item"] {
+    cursor: pointer;
 }
 
 input {
     border: none;
     background: none;
+    color: black;
 }
 
 .eventos-ponteiro {

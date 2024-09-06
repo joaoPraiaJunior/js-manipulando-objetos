@@ -36,15 +36,10 @@ div[data-js="item"] {
     cursor: pointer;
 }
 
-span[data-js="texto"] {
-    font-weight: 600;
-    color: #000;
-    width: 600px;
-}
-
 input {
     border: none;
     background: none;
+    color: black;
 }
 
 .eventos-ponteiro {

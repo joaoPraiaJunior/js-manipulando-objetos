@@ -6,9 +6,6 @@ const elementos = {
     botaoDeletar: '[data-js="deletar"]',
     botaoEditar: '[data-js="editar"]',
     botaoSalvar: '[data-js="salvar"]',
-    valorDoDado: '[data-value]',
-    checkbox: '[data-js="checkbox"]',
-    spanTexto: '[data-js="texto"]',
 }
 
 const formulario = document.querySelector(elementos.formulario);
@@ -20,7 +17,7 @@ function salvarDadosDoFormulario(evento) {
 
     evento.preventDefault();
 
-    const itemDeCompra = formulario.item.value.trim();
+    const itemDeCompra = formulario.item.value;
 
     if (verificaSeItemJaExiste(itemDeCompra)) {
         alert('Item já existe na lista');
@@ -58,8 +55,7 @@ function renderizarItens() {
         itemNaListaComprado(itemCriado);
         deletarItem(itemCriado);
         editarItem(itemCriado);
-        salvarItemEditado(itemCriado);
-        salvarItensPeloTeclado(itemCriado);
+        salvarItemEditado(itemCriado)
     });
 }
 
@@ -68,8 +64,9 @@ function criarItem(item, indice) {
     const li = document.createElement('li');
     const divInputs = document.createElement('div');
     const labelCheckBox = document.createElement('label');
+    const labelInput = document.createElement('label');
     const checkbox = document.createElement('input');
-    const spanTexto = document.createElement('span');
+    const input = document.createElement('input');
     const divBotoes = document.createElement('div');
     const botaoDeletar = document.createElement('button');
     const botaoEditar = document.createElement('button');
@@ -83,14 +80,15 @@ function criarItem(item, indice) {
     divInputs.dataset.js = 'item';
     checkbox.type = 'checkbox';
     checkbox.id = `checkbox-${indice}`;
-    checkbox.dataset.js = 'checkbox';
     labelCheckBox.setAttribute('for', `checkbox-${indice}`);
     labelCheckBox.classList.add('checkbox');
     checkbox.classList.add('eventos-ponteiro');
-    spanTexto.classList.add('is-size-5', 'ml-2', 'is-inline-block');
-    spanTexto.textContent = item.valor;
-    spanTexto.contentEditable = false;
-    spanTexto.dataset.js = 'texto';
+    labelInput.setAttribute('for', `item-${indice}`);
+    input.type = 'text';
+    input.id = `item-${indice}`;
+    input.classList.add('is-size-5', 'ml-2', 'eventos-ponteiro');
+    input.value = item.valor;
+    input.disabled = true;
     botaoDeletar.classList.add('button', 'is-ghost');
     botaoDeletar.dataset.js = 'deletar';
     IconeDeletar.classList.add('fa-solid', 'fa-trash', 'is-clickable');
@@ -102,8 +100,9 @@ function criarItem(item, indice) {
     IconeSalvar.classList.add('fa-solid', 'fa-floppy-disk', 'is-clickable');
 
     labelCheckBox.appendChild(checkbox);
-    labelCheckBox.appendChild(spanTexto);
+    labelInput.appendChild(input);
     divInputs.appendChild(labelCheckBox);
+    divInputs.appendChild(labelInput);
 
     botaoDeletar.appendChild(IconeDeletar);
     botaoEditar.appendChild(IconeEditar);
@@ -125,16 +124,18 @@ function manipularItemNaLista(evento, acao) {
 }
 
 function obterValorDoItem(evento) {
-    return evento.currentTarget.closest(elementos.valorDoDado).getAttribute('data-value');
+    return evento.currentTarget.closest('[data-value]').getAttribute('data-value');
 }
 
 function itemNaListaComprado(itemCriado) {
 
-    const checkboxItem = itemCriado.querySelector(elementos.checkbox);
+    const divInputs = itemCriado.querySelector('[data-js="item"]');
 
-    checkboxItem.addEventListener('change', (evento) => {
+    divInputs.addEventListener('click', (evento) => {
         manipularItemNaLista(evento, (valorDoItem) => {
-            itensParaComprar[valorDoItem].checar = checkboxItem.checked;
+            const checkbox = evento.currentTarget.querySelector('input[type="checkbox"]');
+            checkbox.checked = !checkbox.checked;
+            itensParaComprar[valorDoItem].checar = checkbox.checked;
         });
     });
 }
@@ -146,7 +147,6 @@ function deletarItem(itemCriado) {
     botaoDeletar.addEventListener('click', (evento) => {
         manipularItemNaLista(evento, (valorDoItem) => {
             itensParaComprar.splice(valorDoItem, 1);
-            itemCriado.removeEventListener('click', manipularItemNaLista);
         });
     });
 }
@@ -155,8 +155,12 @@ function editarItem(itemCriado) {
 
     const botaoEditar = itemCriado.querySelector(elementos.botaoEditar);
 
-    botaoEditar.addEventListener('click', () => {
-        manipularBotoesEditarSalvar(itemCriado, true);
+    botaoEditar.addEventListener('click', (evento) => {
+        const valorDoItem = obterValorDoItem(evento);
+        const inputTexto = itemCriado.querySelector(`#item-${valorDoItem}`);
+        inputTexto.disabled = false;
+        inputTexto.focus();
+        manipularBotoesEditarSalvar(evento);
     });
 }
 
@@ -165,62 +169,36 @@ function salvarItemEditado(itemCriado) {
     const botaoSalvar = itemCriado.querySelector(elementos.botaoSalvar);
 
     botaoSalvar.addEventListener('click', (evento) => {
-        atualizarItemDaLista(itemCriado, evento);
-        manipularBotoesEditarSalvar(itemCriado, false);
+        const valorDoItem = obterValorDoItem(evento);
+        const inputTexto = itemCriado.querySelector(`#item-${valorDoItem}`);
+        itensParaComprar[valorDoItem].valor = inputTexto.value;
+        inputTexto.disabled = true;
+        manipularBotoesEditarSalvar(evento);
     });
 }
 
-function salvarItensPeloTeclado(itemCriado) {
+function manipularBotoesEditarSalvar(evento) {
+        console.log(evento.currentTarget.previousElementSibling);
+        const botaoEditar = evento.currentTarget;
+        const botaoSalvar = botaoEditar.previousElementSibling;
 
-    const spanTexto = itemCriado.querySelector(elementos.spanTexto);
+        botaoEditar.style.display === 'inline-block' ?  botaoSalvar.style.display = 'inline-block' : botaoSalvar.style.display = 'none';
 
-    spanTexto.addEventListener('keydown', (evento) => {
-        const tecla = evento.key;
-        if (tecla === 'Enter') {
-            atualizarItemDaLista(itemCriado, evento);
-            manipularBotoesEditarSalvar(itemCriado, false);
-        }
-    });
 
+    
 }
 
-function atualizarItemDaLista(itemCriado, evento) {
-    const valorDoItem = obterValorDoItem(evento);
-    const spanTexto = itemCriado.querySelector(elementos.spanTexto);
-    itensParaComprar[valorDoItem].valor = spanTexto.textContent;
-}
-
-function manipularBotoesEditarSalvar(itemCriado, editar) {
-
-    const spanTexto = itemCriado.querySelector(elementos.spanTexto);
-    const botaoSalvar = itemCriado.querySelector(elementos.botaoSalvar);
-    const botaoEditar = itemCriado.querySelector(elementos.botaoEditar);
-
-    if (editar) {
-        botaoSalvar.style.display = 'inline-block';
-        botaoEditar.style.display = 'none';
-        spanTexto.contentEditable = true;
-        spanTexto.setAttribute('tabindex', '0');
-        spanTexto.focus();
-        return;
-    }
-
-    botaoSalvar.style.display = 'none';
-    botaoEditar.style.display = 'inline-block';
-    spanTexto.contentEditable = false;
-    spanTexto.removeAttribute('tabindex');
-}
 
 function selecionaListaParaItem(valorDoItem, itemCriado) {
 
-    const checkbox = itemCriado.querySelector(elementos.checkbox);
-    const spanTexto = itemCriado.querySelector(elementos.spanTexto);
+    const checkbox = itemCriado.querySelector('input[type="checkbox"]');
+    const inputText = itemCriado.querySelector('input[type="text"]');
     const botaoSalvar = itemCriado.querySelector(elementos.botaoSalvar);
     const botaoEditar = itemCriado.querySelector(elementos.botaoEditar);
 
     if (itensParaComprar[valorDoItem].checar) {
         itensComprados.appendChild(itemCriado);
-        spanTexto.classList.add('itens-comprados');
+        inputText.classList.add('itens-comprados');
         botaoEditar.style.display = 'none';
         botaoSalvar.style.display = 'none';
         checkbox.checked = true;
@@ -228,9 +206,10 @@ function selecionaListaParaItem(valorDoItem, itemCriado) {
     }
 
     listaDeItens.appendChild(itemCriado);
-    spanTexto.classList.remove('itens-comprados');
+    inputText.classList.remove('itens-comprados');
     botaoEditar.style.display = 'inline-block';
     botaoSalvar.style.display = 'none';
 }
+
 
 formulario.addEventListener('submit', salvarDadosDoFormulario);

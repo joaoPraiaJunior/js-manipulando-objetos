@@ -214,7 +214,7 @@ function manipularBotoesEditarSalvar(itemCriado, editar) {
 function selecionaListaParaItem(valorDoItem, itemCriado) {
 
     const checkbox = itemCriado.querySelector(elementos.checkbox);
-    const spanTexto = itemCriado.querySelector(elementos.spanTexto);
+    const spanTexto = itemCriado.querySelector('[data-js="texto"]');
     const botaoSalvar = itemCriado.querySelector(elementos.botaoSalvar);
     const botaoEditar = itemCriado.querySelector(elementos.botaoEditar);
 
@@ -232,5 +232,6 @@ function selecionaListaParaItem(valorDoItem, itemCriado) {
     botaoEditar.style.display = 'inline-block';
     botaoSalvar.style.display = 'none';
 }
+
 
 formulario.addEventListener('submit', salvarDadosDoFormulario);

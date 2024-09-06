@@ -6,9 +6,6 @@ const elementos = {
     botaoDeletar: '[data-js="deletar"]',
     botaoEditar: '[data-js="editar"]',
     botaoSalvar: '[data-js="salvar"]',
-    valorDoDado: '[data-value]',
-    checkbox: '[data-js="checkbox"]',
-    spanTexto: '[data-js="texto"]',
 }
 
 const formulario = document.querySelector(elementos.formulario);
@@ -83,11 +80,10 @@ function criarItem(item, indice) {
     divInputs.dataset.js = 'item';
     checkbox.type = 'checkbox';
     checkbox.id = `checkbox-${indice}`;
-    checkbox.dataset.js = 'checkbox';
     labelCheckBox.setAttribute('for', `checkbox-${indice}`);
     labelCheckBox.classList.add('checkbox');
     checkbox.classList.add('eventos-ponteiro');
-    spanTexto.classList.add('is-size-5', 'ml-2', 'is-inline-block');
+    spanTexto.classList.add('is-size-5', 'ml-2', 'eventos-ponteiro');
     spanTexto.textContent = item.valor;
     spanTexto.contentEditable = false;
     spanTexto.dataset.js = 'texto';
@@ -125,16 +121,18 @@ function manipularItemNaLista(evento, acao) {
 }
 
 function obterValorDoItem(evento) {
-    return evento.currentTarget.closest(elementos.valorDoDado).getAttribute('data-value');
+    return evento.currentTarget.closest('[data-value]').getAttribute('data-value');
 }
 
 function itemNaListaComprado(itemCriado) {
 
-    const checkboxItem = itemCriado.querySelector(elementos.checkbox);
+    const checkbox = itemCriado.querySelector('input[type="checkbox"]');
 
-    checkboxItem.addEventListener('change', (evento) => {
+    checkbox.addEventListener('change', (evento) => {
         manipularItemNaLista(evento, (valorDoItem) => {
-            itensParaComprar[valorDoItem].checar = checkboxItem.checked;
+            const checkbox = evento.currentTarget.querySelector('input[type="checkbox"]');
+            checkbox.checked = !checkbox.checked;
+            itensParaComprar[valorDoItem].checar = checkbox.checked;
         });
     });
 }
@@ -172,7 +170,7 @@ function salvarItemEditado(itemCriado) {
 
 function salvarItensPeloTeclado(itemCriado) {
 
-    const spanTexto = itemCriado.querySelector(elementos.spanTexto);
+    const spanTexto = itemCriado.querySelector('[data-js="texto"]');
 
     spanTexto.addEventListener('keydown', (evento) => {
         const tecla = evento.key;
@@ -186,41 +184,39 @@ function salvarItensPeloTeclado(itemCriado) {
 
 function atualizarItemDaLista(itemCriado, evento) {
     const valorDoItem = obterValorDoItem(evento);
-    const spanTexto = itemCriado.querySelector(elementos.spanTexto);
-    itensParaComprar[valorDoItem].valor = spanTexto.textContent;
+    const inputTexto = itemCriado.querySelector(`#item-${valorDoItem}`);
+    itensParaComprar[valorDoItem].valor = inputTexto.value;
 }
 
 function manipularBotoesEditarSalvar(itemCriado, editar) {
 
-    const spanTexto = itemCriado.querySelector(elementos.spanTexto);
+    const inputTexto = itemCriado.querySelector('input[type="text"]');
     const botaoSalvar = itemCriado.querySelector(elementos.botaoSalvar);
     const botaoEditar = itemCriado.querySelector(elementos.botaoEditar);
 
     if (editar) {
         botaoSalvar.style.display = 'inline-block';
         botaoEditar.style.display = 'none';
-        spanTexto.contentEditable = true;
-        spanTexto.setAttribute('tabindex', '0');
-        spanTexto.focus();
+        inputTexto.disabled = false;
+        inputTexto.focus();
         return;
     }
 
     botaoSalvar.style.display = 'none';
     botaoEditar.style.display = 'inline-block';
-    spanTexto.contentEditable = false;
-    spanTexto.removeAttribute('tabindex');
+    inputTexto.disabled = true;
 }
 
 function selecionaListaParaItem(valorDoItem, itemCriado) {
 
-    const checkbox = itemCriado.querySelector(elementos.checkbox);
-    const spanTexto = itemCriado.querySelector(elementos.spanTexto);
+    const checkbox = itemCriado.querySelector('input[type="checkbox"]');
+    const inputText = itemCriado.querySelector('input[type="text"]');
     const botaoSalvar = itemCriado.querySelector(elementos.botaoSalvar);
     const botaoEditar = itemCriado.querySelector(elementos.botaoEditar);
 
     if (itensParaComprar[valorDoItem].checar) {
         itensComprados.appendChild(itemCriado);
-        spanTexto.classList.add('itens-comprados');
+        inputText.classList.add('itens-comprados');
         botaoEditar.style.display = 'none';
         botaoSalvar.style.display = 'none';
         checkbox.checked = true;
@@ -228,9 +224,10 @@ function selecionaListaParaItem(valorDoItem, itemCriado) {
     }
 
     listaDeItens.appendChild(itemCriado);
-    spanTexto.classList.remove('itens-comprados');
+    inputText.classList.remove('itens-comprados');
     botaoEditar.style.display = 'inline-block';
     botaoSalvar.style.display = 'none';
 }
+
 
 formulario.addEventListener('submit', salvarDadosDoFormulario);
