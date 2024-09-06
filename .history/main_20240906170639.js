@@ -7,8 +7,6 @@ const elementos = {
     botaoEditar: '[data-js="editar"]',
     botaoSalvar: '[data-js="salvar"]',
     valorDoDado: '[data-value]',
-    checkbox: '[data-js="checkbox"]',
-    spanTexto: '[data-js="texto"]',
 }
 
 const formulario = document.querySelector(elementos.formulario);
@@ -83,7 +81,6 @@ function criarItem(item, indice) {
     divInputs.dataset.js = 'item';
     checkbox.type = 'checkbox';
     checkbox.id = `checkbox-${indice}`;
-    checkbox.dataset.js = 'checkbox';
     labelCheckBox.setAttribute('for', `checkbox-${indice}`);
     labelCheckBox.classList.add('checkbox');
     checkbox.classList.add('eventos-ponteiro');
@@ -130,7 +127,7 @@ function obterValorDoItem(evento) {
 
 function itemNaListaComprado(itemCriado) {
 
-    const checkboxItem = itemCriado.querySelector(elementos.checkbox);
+    const checkboxItem = itemCriado.querySelector('input[type="checkbox"]');
 
     checkboxItem.addEventListener('change', (evento) => {
         manipularItemNaLista(evento, (valorDoItem) => {
@@ -172,7 +169,7 @@ function salvarItemEditado(itemCriado) {
 
 function salvarItensPeloTeclado(itemCriado) {
 
-    const spanTexto = itemCriado.querySelector(elementos.spanTexto);
+    const spanTexto = itemCriado.querySelector('[data-js="texto"]');
 
     spanTexto.addEventListener('keydown', (evento) => {
         const tecla = evento.key;
@@ -186,13 +183,13 @@ function salvarItensPeloTeclado(itemCriado) {
 
 function atualizarItemDaLista(itemCriado, evento) {
     const valorDoItem = obterValorDoItem(evento);
-    const spanTexto = itemCriado.querySelector(elementos.spanTexto);
+    const spanTexto = itemCriado.querySelector('[data-js="texto"]');
     itensParaComprar[valorDoItem].valor = spanTexto.textContent;
 }
 
 function manipularBotoesEditarSalvar(itemCriado, editar) {
 
-    const spanTexto = itemCriado.querySelector(elementos.spanTexto);
+    const spanTexto = itemCriado.querySelector('[data-js="texto"]');
     const botaoSalvar = itemCriado.querySelector(elementos.botaoSalvar);
     const botaoEditar = itemCriado.querySelector(elementos.botaoEditar);
 
@@ -213,8 +210,8 @@ function manipularBotoesEditarSalvar(itemCriado, editar) {
 
 function selecionaListaParaItem(valorDoItem, itemCriado) {
 
-    const checkbox = itemCriado.querySelector(elementos.checkbox);
-    const spanTexto = itemCriado.querySelector(elementos.spanTexto);
+    const checkbox = itemCriado.querySelector('input[type="checkbox"]');
+    const spanTexto = itemCriado.querySelector('[data-js="texto"]');
     const botaoSalvar = itemCriado.querySelector(elementos.botaoSalvar);
     const botaoEditar = itemCriado.querySelector(elementos.botaoEditar);
 
@@ -232,5 +229,6 @@ function selecionaListaParaItem(valorDoItem, itemCriado) {
     botaoEditar.style.display = 'inline-block';
     botaoSalvar.style.display = 'none';
 }
+
 
 formulario.addEventListener('submit', salvarDadosDoFormulario);

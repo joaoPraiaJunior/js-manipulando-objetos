@@ -37,9 +37,8 @@ div[data-js="item"] {
 }
 
 span[data-js="texto"] {
-    font-weight: 600;
+    font-weight: 500;
     color: #000;
-    width: 600px;
 }
 
 input {
