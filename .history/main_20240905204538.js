@@ -17,7 +17,7 @@ function salvarDadosDoFormulario(evento) {
 
     evento.preventDefault();
 
-    const itemDeCompra = formulario.item.value.trim();
+    const itemDeCompra = formulario.item.value;
 
     if (verificaSeItemJaExiste(itemDeCompra)) {
         alert('Item já existe na lista');
@@ -54,9 +54,7 @@ function renderizarItens() {
         selecionaListaParaItem(valorDoItem, itemCriado)
         itemNaListaComprado(itemCriado);
         deletarItem(itemCriado);
-        editarItem(itemCriado);
-        salvarItemEditado(itemCriado);
-        salvarItensPeloTeclado(itemCriado);
+        editarItem(itemCriado)
     });
 }
 
@@ -148,7 +146,6 @@ function deletarItem(itemCriado) {
     botaoDeletar.addEventListener('click', (evento) => {
         manipularItemNaLista(evento, (valorDoItem) => {
             itensParaComprar.splice(valorDoItem, 1);
-            itemCriado.removeEventListener('click', manipularItemNaLista);
         });
     });
 }
@@ -157,58 +154,13 @@ function editarItem(itemCriado) {
 
     const botaoEditar = itemCriado.querySelector(elementos.botaoEditar);
 
-    botaoEditar.addEventListener('click', () => {
-        manipularBotoesEditarSalvar(itemCriado, true);
+    botaoEditar.addEventListener('click', (evento) => {
+        manipularItemNaLista(evento, (valorDoItem) => {
+            const inputText = itemCriado.querySelector(`#item-${valorDoItem}`);
+            inputText.disabled = false;
+            inputText.focus();
+        });
     });
-}
-
-function salvarItemEditado(itemCriado) {
-
-    const botaoSalvar = itemCriado.querySelector(elementos.botaoSalvar);
-
-    botaoSalvar.addEventListener('click', (evento) => {
-        atualizarItemDaLista(itemCriado, evento);
-        manipularBotoesEditarSalvar(itemCriado, false);
-    });
-}
-
-function salvarItensPeloTeclado(itemCriado) {
-
-    const inputTexto = itemCriado.querySelector('input[type="text"]');
-
-    inputTexto.addEventListener('keydown', (evento) => {
-        const tecla = evento.key;
-        if (tecla === 'Enter') {
-            atualizarItemDaLista(itemCriado, evento);
-            manipularBotoesEditarSalvar(itemCriado, false);
-        }
-    });
-
-}
-
-function atualizarItemDaLista(itemCriado, evento) {
-    const valorDoItem = obterValorDoItem(evento);
-    const inputTexto = itemCriado.querySelector(`#item-${valorDoItem}`);
-    itensParaComprar[valorDoItem].valor = inputTexto.value;
-}
-
-function manipularBotoesEditarSalvar(itemCriado, editar) {
-
-    const inputTexto = itemCriado.querySelector('input[type="text"]');
-    const botaoSalvar = itemCriado.querySelector(elementos.botaoSalvar);
-    const botaoEditar = itemCriado.querySelector(elementos.botaoEditar);
-
-    if (editar) {
-        botaoSalvar.style.display = 'inline-block';
-        botaoEditar.style.display = 'none';
-        inputTexto.disabled = false;
-        inputTexto.focus();
-        return;
-    }
-
-    botaoSalvar.style.display = 'none';
-    botaoEditar.style.display = 'inline-block';
-    inputTexto.disabled = true;
 }
 
 function selecionaListaParaItem(valorDoItem, itemCriado) {
@@ -230,7 +182,7 @@ function selecionaListaParaItem(valorDoItem, itemCriado) {
     listaDeItens.appendChild(itemCriado);
     inputText.classList.remove('itens-comprados');
     botaoEditar.style.display = 'inline-block';
-    botaoSalvar.style.display = 'none';
+    botaoSalvar.style.display = 'inline-block';
 }
 
 

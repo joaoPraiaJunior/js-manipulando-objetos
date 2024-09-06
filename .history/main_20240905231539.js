@@ -172,17 +172,7 @@ function salvarItemEditado(itemCriado) {
     });
 }
 
-function salvarItensPeloTeclado(itemCriado) {
-
-    const inputTexto = itemCriado.querySelector('input[type="text"]');
-
-    inputTexto.addEventListener('keydown', (evento) => {
-        const tecla = evento.key;
-        if (tecla === 'Enter') {
-            atualizarItemDaLista(itemCriado, evento);
-            manipularBotoesEditarSalvar(itemCriado, false);
-        }
-    });
+function salvarItensPeloTeclado() {
 
 }
 
@@ -210,6 +200,7 @@ function manipularBotoesEditarSalvar(itemCriado, editar) {
     botaoEditar.style.display = 'inline-block';
     inputTexto.disabled = true;
 }
+
 
 function selecionaListaParaItem(valorDoItem, itemCriado) {
 

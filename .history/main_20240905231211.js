@@ -55,8 +55,7 @@ function renderizarItens() {
         itemNaListaComprado(itemCriado);
         deletarItem(itemCriado);
         editarItem(itemCriado);
-        salvarItemEditado(itemCriado);
-        salvarItensPeloTeclado(itemCriado);
+        salvarItemEditado(itemCriado)
     });
 }
 
@@ -172,20 +171,6 @@ function salvarItemEditado(itemCriado) {
     });
 }
 
-function salvarItensPeloTeclado(itemCriado) {
-
-    const inputTexto = itemCriado.querySelector('input[type="text"]');
-
-    inputTexto.addEventListener('keydown', (evento) => {
-        const tecla = evento.key;
-        if (tecla === 'Enter') {
-            atualizarItemDaLista(itemCriado, evento);
-            manipularBotoesEditarSalvar(itemCriado, false);
-        }
-    });
-
-}
-
 function atualizarItemDaLista(itemCriado, evento) {
     const valorDoItem = obterValorDoItem(evento);
     const inputTexto = itemCriado.querySelector(`#item-${valorDoItem}`);
@@ -210,6 +195,7 @@ function manipularBotoesEditarSalvar(itemCriado, editar) {
     botaoEditar.style.display = 'inline-block';
     inputTexto.disabled = true;
 }
+
 
 function selecionaListaParaItem(valorDoItem, itemCriado) {
 

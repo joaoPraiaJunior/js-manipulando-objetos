@@ -211,6 +211,7 @@ function manipularBotoesEditarSalvar(itemCriado, editar) {
     inputTexto.disabled = true;
 }
 
+
 function selecionaListaParaItem(valorDoItem, itemCriado) {
 
     const checkbox = itemCriado.querySelector('input[type="checkbox"]');

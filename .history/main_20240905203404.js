@@ -4,8 +4,6 @@ const elementos = {
     listaDeItens: '[data-js="lista-de-itens"]',
     itensComprados: '[data-js="itens-comprados"]',
     botaoDeletar: '[data-js="deletar"]',
-    botaoEditar: '[data-js="editar"]',
-    botaoSalvar: '[data-js="salvar"]',
 }
 
 const formulario = document.querySelector(elementos.formulario);
@@ -17,7 +15,7 @@ function salvarDadosDoFormulario(evento) {
 
     evento.preventDefault();
 
-    const itemDeCompra = formulario.item.value.trim();
+    const itemDeCompra = formulario.item.value;
 
     if (verificaSeItemJaExiste(itemDeCompra)) {
         alert('Item já existe na lista');
@@ -54,9 +52,6 @@ function renderizarItens() {
         selecionaListaParaItem(valorDoItem, itemCriado)
         itemNaListaComprado(itemCriado);
         deletarItem(itemCriado);
-        editarItem(itemCriado);
-        salvarItemEditado(itemCriado);
-        salvarItensPeloTeclado(itemCriado);
     });
 }
 
@@ -97,8 +92,8 @@ function criarItem(item, indice) {
     botaoEditar.dataset.js = 'editar';
     botaoSalvar.classList.add('button', 'is-ghost');
     botaoSalvar.dataset.js = 'salvar';
-    IconeEditar.classList.add('fa-solid', 'fa-pen-to-square', 'is-clickable', 'editar');
-    IconeSalvar.classList.add('fa-solid', 'fa-floppy-disk', 'is-clickable');
+    IconeEditar.classList.add('fa-regular', 'fa-pen-to-square', 'is-clickable', 'editar');
+    IconeSalvar.classList.add('fa-regular', 'fa-floppy-disk', 'is-clickable');
 
     labelCheckBox.appendChild(checkbox);
     labelInput.appendChild(input);
@@ -108,9 +103,9 @@ function criarItem(item, indice) {
     botaoDeletar.appendChild(IconeDeletar);
     botaoEditar.appendChild(IconeEditar);
     botaoSalvar.appendChild(IconeSalvar);
-    divBotoes.appendChild(botaoSalvar);
-    divBotoes.appendChild(botaoEditar);
     divBotoes.appendChild(botaoDeletar);
+    divBotoes.appendChild(botaoEditar);
+    divBotoes.appendChild(botaoSalvar);
 
     li.appendChild(divInputs);
     li.appendChild(divBotoes);
@@ -148,89 +143,24 @@ function deletarItem(itemCriado) {
     botaoDeletar.addEventListener('click', (evento) => {
         manipularItemNaLista(evento, (valorDoItem) => {
             itensParaComprar.splice(valorDoItem, 1);
-            itemCriado.removeEventListener('click', manipularItemNaLista);
         });
     });
-}
-
-function editarItem(itemCriado) {
-
-    const botaoEditar = itemCriado.querySelector(elementos.botaoEditar);
-
-    botaoEditar.addEventListener('click', () => {
-        manipularBotoesEditarSalvar(itemCriado, true);
-    });
-}
-
-function salvarItemEditado(itemCriado) {
-
-    const botaoSalvar = itemCriado.querySelector(elementos.botaoSalvar);
-
-    botaoSalvar.addEventListener('click', (evento) => {
-        atualizarItemDaLista(itemCriado, evento);
-        manipularBotoesEditarSalvar(itemCriado, false);
-    });
-}
-
-function salvarItensPeloTeclado(itemCriado) {
-
-    const inputTexto = itemCriado.querySelector('input[type="text"]');
-
-    inputTexto.addEventListener('keydown', (evento) => {
-        const tecla = evento.key;
-        if (tecla === 'Enter') {
-            atualizarItemDaLista(itemCriado, evento);
-            manipularBotoesEditarSalvar(itemCriado, false);
-        }
-    });
-
-}
-
-function atualizarItemDaLista(itemCriado, evento) {
-    const valorDoItem = obterValorDoItem(evento);
-    const inputTexto = itemCriado.querySelector(`#item-${valorDoItem}`);
-    itensParaComprar[valorDoItem].valor = inputTexto.value;
-}
-
-function manipularBotoesEditarSalvar(itemCriado, editar) {
-
-    const inputTexto = itemCriado.querySelector('input[type="text"]');
-    const botaoSalvar = itemCriado.querySelector(elementos.botaoSalvar);
-    const botaoEditar = itemCriado.querySelector(elementos.botaoEditar);
-
-    if (editar) {
-        botaoSalvar.style.display = 'inline-block';
-        botaoEditar.style.display = 'none';
-        inputTexto.disabled = false;
-        inputTexto.focus();
-        return;
-    }
-
-    botaoSalvar.style.display = 'none';
-    botaoEditar.style.display = 'inline-block';
-    inputTexto.disabled = true;
 }
 
 function selecionaListaParaItem(valorDoItem, itemCriado) {
 
     const checkbox = itemCriado.querySelector('input[type="checkbox"]');
     const inputText = itemCriado.querySelector('input[type="text"]');
-    const botaoSalvar = itemCriado.querySelector(elementos.botaoSalvar);
-    const botaoEditar = itemCriado.querySelector(elementos.botaoEditar);
 
     if (itensParaComprar[valorDoItem].checar) {
         itensComprados.appendChild(itemCriado);
         inputText.classList.add('itens-comprados');
-        botaoEditar.style.display = 'none';
-        botaoSalvar.style.display = 'none';
         checkbox.checked = true;
         return;
     }
 
     listaDeItens.appendChild(itemCriado);
     inputText.classList.remove('itens-comprados');
-    botaoEditar.style.display = 'inline-block';
-    botaoSalvar.style.display = 'none';
 }
 
 
