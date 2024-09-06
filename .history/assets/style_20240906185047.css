@@ -39,8 +39,6 @@ div[data-js="item"] {
 span[data-js="texto"] {
     font-weight: 600;
     color: #000;
-    border-radius: 5px;
-    padding-left: 5px;
     width: 600px;
 }
 
@@ -58,7 +56,7 @@ input {
 }
 
 .editando {
-    outline: 3px solid #4574E3;
+    outline: 3px solid #00d1b2;
     background-color: #f0f8ff;
 }
 

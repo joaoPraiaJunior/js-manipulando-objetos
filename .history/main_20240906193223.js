@@ -61,27 +61,19 @@
         return itemJaExiste;
     }
 
-
-    function limparListas() {
-        listaDeItens.innerHTML = '';
-        itensComprados.innerHTML = '';
-    }
-
     function renderizarItens() {
 
         armazenarItemNoLocalStorage();
-        limparListas();
 
-        itensParaComprar.forEach(criarEAdicionarItem);
-    }
+        listaDeItens.innerHTML = '';
+        itensComprados.innerHTML = '';
 
-
-    function criarEAdicionarItem(item, indice) {
-        
-        const itemCriado = criarItem(item, indice);
-        const valorDoItem = itemCriado.getAttribute('data-value');
-        selecionaListaParaItem(valorDoItem, itemCriado)
-        adicionarEventosAoItem(itemCriado)
+        itensParaComprar.forEach((item, indice) => {
+            const itemCriado = criarItem(item, indice);
+            const valorDoItem = itemCriado.getAttribute('data-value');
+            selecionaListaParaItem(valorDoItem, itemCriado)
+            adicionarEventosAoItem(itemCriado)
+        });
     }
 
 
@@ -237,7 +229,7 @@
 
         textoDoItem.contentEditable = editar;
         textoDoItem.classList.toggle('editando', editar);
-
+        
         if (editar) {
             textoDoItem.focus();
             textoDoItem.setAttribute('tabindex', '0');
@@ -264,7 +256,7 @@
         checkbox.checked = estaComprado;
     }
 
-    function moverItemParaLista(itemCriado, estaComprado) {
+    function moverItemParaLista() {
 
         const listaDeDestino = estaComprado ? itensComprados : listaDeItens;
         listaDeDestino.appendChild(itemCriado);

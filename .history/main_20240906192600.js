@@ -61,33 +61,25 @@
         return itemJaExiste;
     }
 
-
-    function limparListas() {
-        listaDeItens.innerHTML = '';
-        itensComprados.innerHTML = '';
-    }
-
     function renderizarItens() {
 
         armazenarItemNoLocalStorage();
-        limparListas();
 
-        itensParaComprar.forEach(criarEAdicionarItem);
-    }
+        listaDeItens.innerHTML = '';
+        itensComprados.innerHTML = '';
 
-
-    function criarEAdicionarItem(item, indice) {
-        
-        const itemCriado = criarItem(item, indice);
-        const valorDoItem = itemCriado.getAttribute('data-value');
-        selecionaListaParaItem(valorDoItem, itemCriado)
-        adicionarEventosAoItem(itemCriado)
+        itensParaComprar.forEach((item, indice) => {
+            const itemCriado = criarItem(item, indice);
+            const valorDoItem = itemCriado.getAttribute('data-value');
+            selecionaListaParaItem(valorDoItem, itemCriado)
+            adicionarEventosAoItem(itemCriado)
+        });
     }
 
 
     function adicionarEventosAoItem(itemCriado) {
 
-        const eventos = [itemNaListaComprado, deletarItem, editarItem, salvarItemEditado, salvarItensPeloTeclado];
+        const eventos = [itemNaListaComprado, deletarItem, editarItem, salvarEdicaoDoItem, salvarItensPeloTeclado];
         eventos.forEach(evento => evento(itemCriado));
     }
 
@@ -182,7 +174,7 @@
         });
     }
 
-    function salvarItemEditado(itemCriado) {
+    function salvarEdicaoDoItem(itemCriado) {
 
         const botaoSalvar = itemCriado.querySelector(elementos.botaoSalvar);
 
@@ -237,7 +229,7 @@
 
         textoDoItem.contentEditable = editar;
         textoDoItem.classList.toggle('editando', editar);
-
+        
         if (editar) {
             textoDoItem.focus();
             textoDoItem.setAttribute('tabindex', '0');
@@ -256,18 +248,14 @@
         const botaoEditar = itemCriado.querySelector(elementos.botaoEditar);
 
         const estaComprado = itensParaComprar[valorDoItem].checar;
-        moverItemParaLista(itemCriado, estaComprado);
+
+        const listaDeDestino = estaComprado ? itensComprados : listaDeItens;
+        listaDeDestino.appendChild(itemCriado);
 
         textoDoItem.classList.toggle('itens-comprados', estaComprado);
         botaoEditar.classList.toggle('esconder', estaComprado);
         botaoSalvar.classList.add('esconder');
         checkbox.checked = estaComprado;
-    }
-
-    function moverItemParaLista(itemCriado, estaComprado) {
-
-        const listaDeDestino = estaComprado ? itensComprados : listaDeItens;
-        listaDeDestino.appendChild(itemCriado);
     }
 
     function armazenarItemNoLocalStorage() {
@@ -277,6 +265,6 @@
     formulario.addEventListener('submit', salvarDadosDoFormulario);
     document.addEventListener('DOMContentLoaded', renderizarItens);
 
-    // (valores omitidos, 0, null, NaN, undefined, "", false) << retornam false no JS
+    // (valores omitidos, 0, null, NaN, undefined, "", false) << retornam false
 
 })();
