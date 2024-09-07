@@ -61,8 +61,8 @@
         return itemJaExiste;
     }
 
-    function limparListas() {
 
+    function limparListas() {
         listaDeItens.innerHTML = '';
         itensComprados.innerHTML = '';
     }
@@ -70,7 +70,6 @@
     function renderizarItens() {
 
         armazenarItemNoLocalStorage();
-        
         limparListas();
 
         itensParaComprar.forEach(criarEAdicionarItem);
@@ -78,11 +77,11 @@
 
 
     function criarEAdicionarItem(item, indice) {
-
+        
         const itemCriado = criarItem(item, indice);
         const valorDoItem = itemCriado.getAttribute('data-value');
         selecionaListaParaItem(valorDoItem, itemCriado)
-        adicionarEventosAoItem(itemCriado);
+        adicionarEventosAoItem(itemCriado)
     }
 
 
@@ -127,6 +126,7 @@
         botaoEditar.dataset.js = 'editar';
         botaoSalvar.classList.add('button', 'is-ghost');
         botaoSalvar.dataset.js = 'salvar';
+        botaoSalvar.id = `salvar-${indice}`;
         IconeEditar.classList.add('fa-solid', 'fa-pen-to-square', 'is-clickable', 'editar');
         IconeSalvar.classList.add('fa-solid', 'fa-floppy-disk', 'is-clickable');
 
@@ -158,8 +158,7 @@
         checkboxItem.addEventListener('change', (evento) => {
             const valorDoItem = obterValorDoItem(evento);
             itensParaComprar[valorDoItem].checar = checkboxItem.checked;
-            armazenarItemNoLocalStorage();
-            selecionaListaParaItem(valorDoItem, itemCriado)
+            renderizarItens();
         });
     }
 
@@ -169,21 +168,9 @@
 
         botaoDeletar.addEventListener('click', (evento) => {
             const valorDoItem = obterValorDoItem(evento);
-            itensParaComprar.splice(itensParaComprar.indexOf(valorDoItem), 1);
-            armazenarItemNoLocalStorage();
-            removeElementoDaLista(itemCriado);
+            itensParaComprar.splice(valorDoItem, 1);
+            renderizarItens();
         });
-    }
-
-    function removeElementoDaLista(itemCriado) {
-
-        let listaDeItens = itemCriado.parentElement;
-
-        while (listaDeItens.tagName !== 'UL') {
-            listaDeItens = listaDeItens.parentElement;
-        }
-
-        listaDeItens.removeChild(itemCriado);
     }
 
     function editarItem(itemCriado) {
@@ -226,16 +213,18 @@
                 alternarModoDeEdicao(itemCriado, false)
             }
         });
+
     }
 
     function atualizarItemDaLista(itemCriado, evento) {
         const valorDoItem = obterValorDoItem(evento);
         const textoDoItem = itemCriado.querySelector(elementos.textoDoItem);
         itensParaComprar[valorDoItem].valor = textoDoItem.textContent;
-        armazenarItemNoLocalStorage();
+        renderizarItens();
     }
 
     function manipularBotoesEditarSalvar(itemCriado, editar) {
+
         const botaoSalvar = itemCriado.querySelector(elementos.botaoSalvar);
         const botaoEditar = itemCriado.querySelector(elementos.botaoEditar);
 

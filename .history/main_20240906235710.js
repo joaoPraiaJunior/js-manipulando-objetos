@@ -61,8 +61,8 @@
         return itemJaExiste;
     }
 
-    function limparListas() {
 
+    function limparListas() {
         listaDeItens.innerHTML = '';
         itensComprados.innerHTML = '';
     }
@@ -70,7 +70,6 @@
     function renderizarItens() {
 
         armazenarItemNoLocalStorage();
-        
         limparListas();
 
         itensParaComprar.forEach(criarEAdicionarItem);
@@ -78,11 +77,11 @@
 
 
     function criarEAdicionarItem(item, indice) {
-
+        
         const itemCriado = criarItem(item, indice);
         const valorDoItem = itemCriado.getAttribute('data-value');
         selecionaListaParaItem(valorDoItem, itemCriado)
-        adicionarEventosAoItem(itemCriado);
+        adicionarEventosAoItem(itemCriado)
     }
 
 
@@ -119,14 +118,17 @@
         textoDoItem.classList.add('is-size-5', 'ml-2', 'is-inline-block');
         textoDoItem.textContent = item.valor;
         textoDoItem.contentEditable = false;
+        textoDoItem.id = `texto-${indice}`;
         textoDoItem.dataset.js = 'texto';
         botaoDeletar.classList.add('button', 'is-ghost');
         botaoDeletar.dataset.js = 'deletar';
         IconeDeletar.classList.add('fa-solid', 'fa-trash', 'is-clickable');
         botaoEditar.classList.add('button', 'is-ghost');
         botaoEditar.dataset.js = 'editar';
+        botaoEditar.id = `editar-${indice}`;
         botaoSalvar.classList.add('button', 'is-ghost');
         botaoSalvar.dataset.js = 'salvar';
+        botaoSalvar.id = `salvar-${indice}`;
         IconeEditar.classList.add('fa-solid', 'fa-pen-to-square', 'is-clickable', 'editar');
         IconeSalvar.classList.add('fa-solid', 'fa-floppy-disk', 'is-clickable');
 
@@ -158,8 +160,7 @@
         checkboxItem.addEventListener('change', (evento) => {
             const valorDoItem = obterValorDoItem(evento);
             itensParaComprar[valorDoItem].checar = checkboxItem.checked;
-            armazenarItemNoLocalStorage();
-            selecionaListaParaItem(valorDoItem, itemCriado)
+            renderizarItens();
         });
     }
 
@@ -169,21 +170,9 @@
 
         botaoDeletar.addEventListener('click', (evento) => {
             const valorDoItem = obterValorDoItem(evento);
-            itensParaComprar.splice(itensParaComprar.indexOf(valorDoItem), 1);
-            armazenarItemNoLocalStorage();
-            removeElementoDaLista(itemCriado);
+            itensParaComprar.splice(valorDoItem, 1);
+            renderizarItens();
         });
-    }
-
-    function removeElementoDaLista(itemCriado) {
-
-        let listaDeItens = itemCriado.parentElement;
-
-        while (listaDeItens.tagName !== 'UL') {
-            listaDeItens = listaDeItens.parentElement;
-        }
-
-        listaDeItens.removeChild(itemCriado);
     }
 
     function editarItem(itemCriado) {
@@ -191,8 +180,9 @@
         const botaoEditar = itemCriado.querySelector(elementos.botaoEditar);
 
         botaoEditar.addEventListener('click', () => {
-            manipularBotoesEditarSalvar(itemCriado, true);
-            alternarModoDeEdicao(itemCriado, true);
+            const valorDoItem = obterValorDoItem(evento);
+            manipularBotoesEditarSalvar(itemCriado, true, valorDoItem);
+            alternarModoDeEdicao(itemCriado, true, valorDoItem);
         });
     }
 
@@ -201,9 +191,10 @@
         const botaoSalvar = itemCriado.querySelector(elementos.botaoSalvar);
 
         botaoSalvar.addEventListener('click', (evento) => {
-            atualizarItemDaLista(itemCriado, evento);
-            manipularBotoesEditarSalvar(itemCriado, false);
-            alternarModoDeEdicao(itemCriado, false);
+            const valorDoItem = obterValorDoItem(evento);
+            atualizarItemDaLista(itemCriado, valorDoItem);
+            manipularBotoesEditarSalvar(itemCriado, false, valorDoItem);
+            alternarModoDeEdicao(itemCriado, false, valorDoItem);
         });
     }
 
@@ -212,40 +203,41 @@
         const textoDoItem = itemCriado.querySelector(elementos.textoDoItem);
 
         textoDoItem.addEventListener('keydown', (evento) => {
-
+            const valorDoItem = obterValorDoItem(evento);
             const tecla = evento.key;
 
             if (tecla === 'Enter') {
                 evento.preventDefault();
-                atualizarItemDaLista(itemCriado, evento);
-                manipularBotoesEditarSalvar(itemCriado, false);
-                alternarModoDeEdicao(itemCriado, false)
+                atualizarItemDaLista(itemCriado, valorDoItem);
+                manipularBotoesEditarSalvar(itemCriado, false, valorDoItem);
+                alternarModoDeEdicao(itemCriado, false, valorDoItem);
 
             } else if (tecla === 'Escape') {
-                manipularBotoesEditarSalvar(itemCriado, false);
-                alternarModoDeEdicao(itemCriado, false)
+                manipularBotoesEditarSalvar(itemCriado, false, valorDoItem);
+                alternarModoDeEdicao(itemCriado, false, valorDoItem);
             }
         });
+
     }
 
-    function atualizarItemDaLista(itemCriado, evento) {
-        const valorDoItem = obterValorDoItem(evento);
+    function atualizarItemDaLista(itemCriado, valorDoItem) {
         const textoDoItem = itemCriado.querySelector(elementos.textoDoItem);
         itensParaComprar[valorDoItem].valor = textoDoItem.textContent;
-        armazenarItemNoLocalStorage();
+        renderizarItens();
     }
 
-    function manipularBotoesEditarSalvar(itemCriado, editar) {
-        const botaoSalvar = itemCriado.querySelector(elementos.botaoSalvar);
-        const botaoEditar = itemCriado.querySelector(elementos.botaoEditar);
+    function manipularBotoesEditarSalvar(itemCriado, editar, valorDoItem) {
+
+        const botaoSalvar = itemCriado.getElementById(`salvar-${valorDoItem}`);
+        const botaoEditar = itemCriado.getElementById(`editar-${valorDoItem}`);
 
         botaoEditar.classList.toggle('esconder', editar);
         botaoSalvar.classList.toggle('esconder', !editar);
     }
 
-    function alternarModoDeEdicao(itemCriado, editar) {
+    function alternarModoDeEdicao(itemCriado, editar, valorDoItem) {
 
-        const textoDoItem = itemCriado.querySelector(elementos.textoDoItem);
+        const textoDoItem = itemCriado.getElementById(`texto-${valorDoItem}`);
 
         textoDoItem.contentEditable = editar;
         textoDoItem.classList.toggle('editando', editar);

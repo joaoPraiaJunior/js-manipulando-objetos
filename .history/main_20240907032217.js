@@ -70,7 +70,6 @@
     function renderizarItens() {
 
         armazenarItemNoLocalStorage();
-        
         limparListas();
 
         itensParaComprar.forEach(criarEAdicionarItem);
@@ -185,6 +184,8 @@
 
         listaDeItens.removeChild(itemCriado);
     }
+
+
 
     function editarItem(itemCriado) {
 

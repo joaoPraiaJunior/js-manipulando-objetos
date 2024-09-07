@@ -70,7 +70,6 @@
     function renderizarItens() {
 
         armazenarItemNoLocalStorage();
-        
         limparListas();
 
         itensParaComprar.forEach(criarEAdicionarItem);
@@ -176,7 +175,6 @@
     }
 
     function removeElementoDaLista(itemCriado) {
-
         let listaDeItens = itemCriado.parentElement;
 
         while (listaDeItens.tagName !== 'UL') {
@@ -184,7 +182,10 @@
         }
 
         listaDeItens.removeChild(itemCriado);
+
     }
+
+
 
     function editarItem(itemCriado) {
 
@@ -226,6 +227,7 @@
                 alternarModoDeEdicao(itemCriado, false)
             }
         });
+
     }
 
     function atualizarItemDaLista(itemCriado, evento) {

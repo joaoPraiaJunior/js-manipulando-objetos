@@ -61,8 +61,8 @@
         return itemJaExiste;
     }
 
-    function limparListas() {
 
+    function limparListas() {
         listaDeItens.innerHTML = '';
         itensComprados.innerHTML = '';
     }
@@ -70,7 +70,6 @@
     function renderizarItens() {
 
         armazenarItemNoLocalStorage();
-        
         limparListas();
 
         itensParaComprar.forEach(criarEAdicionarItem);
@@ -78,7 +77,7 @@
 
 
     function criarEAdicionarItem(item, indice) {
-
+        
         const itemCriado = criarItem(item, indice);
         const valorDoItem = itemCriado.getAttribute('data-value');
         selecionaListaParaItem(valorDoItem, itemCriado)
@@ -158,8 +157,7 @@
         checkboxItem.addEventListener('change', (evento) => {
             const valorDoItem = obterValorDoItem(evento);
             itensParaComprar[valorDoItem].checar = checkboxItem.checked;
-            armazenarItemNoLocalStorage();
-            selecionaListaParaItem(valorDoItem, itemCriado)
+            renderizarItens();
         });
     }
 
@@ -169,30 +167,19 @@
 
         botaoDeletar.addEventListener('click', (evento) => {
             const valorDoItem = obterValorDoItem(evento);
-            itensParaComprar.splice(itensParaComprar.indexOf(valorDoItem), 1);
-            armazenarItemNoLocalStorage();
-            removeElementoDaLista(itemCriado);
+            itensParaComprar.splice(valorDoItem, 1);
+            renderizarItens();
         });
-    }
-
-    function removeElementoDaLista(itemCriado) {
-
-        let listaDeItens = itemCriado.parentElement;
-
-        while (listaDeItens.tagName !== 'UL') {
-            listaDeItens = listaDeItens.parentElement;
-        }
-
-        listaDeItens.removeChild(itemCriado);
     }
 
     function editarItem(itemCriado) {
 
         const botaoEditar = itemCriado.querySelector(elementos.botaoEditar);
 
-        botaoEditar.addEventListener('click', () => {
-            manipularBotoesEditarSalvar(itemCriado, true);
-            alternarModoDeEdicao(itemCriado, true);
+        botaoEditar.addEventListener('click', (evento) => {
+            const valorDoItem = obterValorDoItem(evento);
+            manipularBotoesEditarSalvar(itemCriado, true, valorDoItem);
+            alternarModoDeEdicao(itemCriado, true, valorDoItem);
         });
     }
 
@@ -232,20 +219,24 @@
         const valorDoItem = obterValorDoItem(evento);
         const textoDoItem = itemCriado.querySelector(elementos.textoDoItem);
         itensParaComprar[valorDoItem].valor = textoDoItem.textContent;
-        armazenarItemNoLocalStorage();
+        renderizarItens();
     }
 
-    function manipularBotoesEditarSalvar(itemCriado, editar) {
-        const botaoSalvar = itemCriado.querySelector(elementos.botaoSalvar);
-        const botaoEditar = itemCriado.querySelector(elementos.botaoEditar);
+    function manipularBotoesEditarSalvar(itemCriado, editar, valorDoItem) {
+        const botaoSalvar = document.querySelectorAll(elementos.botaoSalvar)[valorDoItem];
+        const botaoEditar = document.querySelectorAll(elementos.botaoEditar)[valorDoItem];
+
+        console.log(botaoSalvar, botaoEditar);
 
         botaoEditar.classList.toggle('esconder', editar);
         botaoSalvar.classList.toggle('esconder', !editar);
+
+        valorDoItem = -1;
     }
 
-    function alternarModoDeEdicao(itemCriado, editar) {
+    function alternarModoDeEdicao(itemCriado, editar, valorDoItem) {
 
-        const textoDoItem = itemCriado.querySelector(elementos.textoDoItem);
+        const textoDoItem = document.querySelectorAll(elementos.textoDoItem)[valorDoItem];
 
         textoDoItem.contentEditable = editar;
         textoDoItem.classList.toggle('editando', editar);

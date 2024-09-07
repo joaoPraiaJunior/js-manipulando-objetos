@@ -70,7 +70,6 @@
     function renderizarItens() {
 
         armazenarItemNoLocalStorage();
-        
         limparListas();
 
         itensParaComprar.forEach(criarEAdicionarItem);
@@ -169,21 +168,19 @@
 
         botaoDeletar.addEventListener('click', (evento) => {
             const valorDoItem = obterValorDoItem(evento);
-            itensParaComprar.splice(itensParaComprar.indexOf(valorDoItem), 1);
+            itensParaComprar.splice(valorDoItem, 1);
+            removerItemDoDOM(itemCriado, valorDoItem)
             armazenarItemNoLocalStorage();
-            removeElementoDaLista(itemCriado);
         });
     }
 
-    function removeElementoDaLista(itemCriado) {
+    function removerItemDoDOM(itemCriado, valorDoItem) {
+        const itemRemovido = itemCriado.dataset.value === valorDoItem;
 
-        let listaDeItens = itemCriado.parentElement;
-
-        while (listaDeItens.tagName !== 'UL') {
-            listaDeItens = listaDeItens.parentElement;
+        if (itemRemovido) {
+            itemCriado.remove();
+            return;
         }
-
-        listaDeItens.removeChild(itemCriado);
     }
 
     function editarItem(itemCriado) {
@@ -226,6 +223,7 @@
                 alternarModoDeEdicao(itemCriado, false)
             }
         });
+
     }
 
     function atualizarItemDaLista(itemCriado, evento) {

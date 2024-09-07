@@ -61,17 +61,16 @@
         return itemJaExiste;
     }
 
-    function limparListas() {
+    // function limparListas() {
 
-        listaDeItens.innerHTML = '';
-        itensComprados.innerHTML = '';
-    }
+    //     listaDeItens.innerHTML = '';
+    //     itensComprados.innerHTML = '';
+    // }
 
     function renderizarItens() {
 
         armazenarItemNoLocalStorage();
-        
-        limparListas();
+        // limparListas();
 
         itensParaComprar.forEach(criarEAdicionarItem);
     }
@@ -185,6 +184,8 @@
 
         listaDeItens.removeChild(itemCriado);
     }
+
+
 
     function editarItem(itemCriado) {
 

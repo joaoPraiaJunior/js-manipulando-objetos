@@ -61,24 +61,16 @@
         return itemJaExiste;
     }
 
-    function limparListas() {
-
-        listaDeItens.innerHTML = '';
-        itensComprados.innerHTML = '';
-    }
-
     function renderizarItens() {
 
         armazenarItemNoLocalStorage();
-        
-        limparListas();
 
         itensParaComprar.forEach(criarEAdicionarItem);
     }
 
 
     function criarEAdicionarItem(item, indice) {
-
+        
         const itemCriado = criarItem(item, indice);
         const valorDoItem = itemCriado.getAttribute('data-value');
         selecionaListaParaItem(valorDoItem, itemCriado)
@@ -169,21 +161,16 @@
 
         botaoDeletar.addEventListener('click', (evento) => {
             const valorDoItem = obterValorDoItem(evento);
-            itensParaComprar.splice(itensParaComprar.indexOf(valorDoItem), 1);
+            itensParaComprar.splice(valorDoItem, 1);
             armazenarItemNoLocalStorage();
-            removeElementoDaLista(itemCriado);
+            removerItemDoDOM(itemCriado, valorDoItem)
         });
     }
 
-    function removeElementoDaLista(itemCriado) {
+    function removerItemDoDOM(itemCriado, valorDoItem) {
 
-        let listaDeItens = itemCriado.parentElement;
-
-        while (listaDeItens.tagName !== 'UL') {
-            listaDeItens = listaDeItens.parentElement;
-        }
-
-        listaDeItens.removeChild(itemCriado);
+        const pegarLista = itemCriado.closest('ul');
+        pegarLista.removeChild(itemCriado);
     }
 
     function editarItem(itemCriado) {
@@ -226,6 +213,7 @@
                 alternarModoDeEdicao(itemCriado, false)
             }
         });
+
     }
 
     function atualizarItemDaLista(itemCriado, evento) {

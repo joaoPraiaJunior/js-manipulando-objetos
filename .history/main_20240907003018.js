@@ -61,8 +61,8 @@
         return itemJaExiste;
     }
 
-    function limparListas() {
 
+    function limparListas() {
         listaDeItens.innerHTML = '';
         itensComprados.innerHTML = '';
     }
@@ -70,7 +70,6 @@
     function renderizarItens() {
 
         armazenarItemNoLocalStorage();
-        
         limparListas();
 
         itensParaComprar.forEach(criarEAdicionarItem);
@@ -158,8 +157,7 @@
         checkboxItem.addEventListener('change', (evento) => {
             const valorDoItem = obterValorDoItem(evento);
             itensParaComprar[valorDoItem].checar = checkboxItem.checked;
-            armazenarItemNoLocalStorage();
-            selecionaListaParaItem(valorDoItem, itemCriado)
+            renderizarItens();
         });
     }
 
@@ -169,41 +167,33 @@
 
         botaoDeletar.addEventListener('click', (evento) => {
             const valorDoItem = obterValorDoItem(evento);
-            itensParaComprar.splice(itensParaComprar.indexOf(valorDoItem), 1);
-            armazenarItemNoLocalStorage();
-            removeElementoDaLista(itemCriado);
+            itensParaComprar.splice(valorDoItem, 1);
+            renderizarItens();
         });
-    }
-
-    function removeElementoDaLista(itemCriado) {
-
-        let listaDeItens = itemCriado.parentElement;
-
-        while (listaDeItens.tagName !== 'UL') {
-            listaDeItens = listaDeItens.parentElement;
-        }
-
-        listaDeItens.removeChild(itemCriado);
     }
 
     function editarItem(itemCriado) {
 
-        const botaoEditar = itemCriado.querySelector(elementos.botaoEditar);
+        const botaoEditar = itemCriado.querySelectorAll(elementos.botaoEditar);
 
-        botaoEditar.addEventListener('click', () => {
-            manipularBotoesEditarSalvar(itemCriado, true);
-            alternarModoDeEdicao(itemCriado, true);
+        botaoEditar.forEach(botao => {
+            botao.addEventListener('click', () => {
+                manipularBotoesEditarSalvar(itemCriado, true);
+                alternarModoDeEdicao(itemCriado, true);
+            });
         });
     }
 
     function salvarItemEditado(itemCriado) {
 
-        const botaoSalvar = itemCriado.querySelector(elementos.botaoSalvar);
+        const botaoSalvar = itemCriado.querySelectorAll(elementos.botaoSalvar);
 
-        botaoSalvar.addEventListener('click', (evento) => {
-            atualizarItemDaLista(itemCriado, evento);
-            manipularBotoesEditarSalvar(itemCriado, false);
-            alternarModoDeEdicao(itemCriado, false);
+        botaoSalvar.forEach(botao => {
+            botao.addEventListener('click', (evento) => {
+                atualizarItemDaLista(itemCriado, evento);
+                manipularBotoesEditarSalvar(itemCriado, false);
+                alternarModoDeEdicao(itemCriado, false)
+            });
         });
     }
 
@@ -226,13 +216,14 @@
                 alternarModoDeEdicao(itemCriado, false)
             }
         });
+
     }
 
     function atualizarItemDaLista(itemCriado, evento) {
         const valorDoItem = obterValorDoItem(evento);
         const textoDoItem = itemCriado.querySelector(elementos.textoDoItem);
         itensParaComprar[valorDoItem].valor = textoDoItem.textContent;
-        armazenarItemNoLocalStorage();
+        renderizarItens();
     }
 
     function manipularBotoesEditarSalvar(itemCriado, editar) {
