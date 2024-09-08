@@ -43,11 +43,10 @@
 
         evento.preventDefault();
 
-        const itemDeCompra = formulario.item.value.trim();
+        let itemDeCompra = formulario.item.value.trim();
 
         if (!itemDeCompra) {
             alert('Campo não pode ser vazio');
-            formulario.item.focus();
             return;
         }
 
@@ -55,6 +54,8 @@
             alert(`O item "${itemDeCompra}" já está na lista`);
             return;
         }
+
+        itemDeCompra = textoCapitalizado(itemDeCompra);
 
         const dados = {
             valor: itemDeCompra,
@@ -268,7 +269,7 @@
         const idItem = obteridItem(evento);
         const textoDoItem = itemCriado.querySelector(elementos.textoDoItem);
 
-        itensParaComprar[idItem].valor = textoDoItem.textContent;
+        itensParaComprar[idItem].valor = textoCapitalizado(textoDoItem.textContent);
         armazenarItemNoLocalStorage();
     }
 
@@ -346,6 +347,16 @@
 
     function armazenarItemNoLocalStorage() {
         localStorage.setItem('itens', JSON.stringify(itensParaComprar));
+    }
+
+    function textoCapitalizado(texto) {
+        const textoDoItem = texto.split(' ');
+
+        const textoCapitalizado = textoDoItem.map(palavra => {
+            return palavra.charAt(0).toUpperCase() + palavra.slice(1).toLowerCase();
+        });
+
+        return textoCapitalizado.join(' ');
     }
 
     formulario.addEventListener('submit', salvarDadosDoFormulario);

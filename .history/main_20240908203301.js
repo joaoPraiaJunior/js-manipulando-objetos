@@ -47,7 +47,6 @@
 
         if (!itemDeCompra) {
             alert('Campo não pode ser vazio');
-            formulario.item.focus();
             return;
         }
 
@@ -266,9 +265,14 @@
 
     function atualizarItemDaLista(itemCriado, evento) {
         const idItem = obteridItem(evento);
-        const textoDoItem = itemCriado.querySelector(elementos.textoDoItem);
+        const textoDoItem = itemCriado.querySelector(elementos.textoDoItem).textContent;
 
-        itensParaComprar[idItem].valor = textoDoItem.textContent;
+        if (verificaSeItemJaExiste(textoDoItem)) {
+            alert(`O item "${textoDoItem}" já está na lista`);
+            return;
+        }
+
+        itensParaComprar[idItem].valor = textoDoItem;
         armazenarItemNoLocalStorage();
     }
 

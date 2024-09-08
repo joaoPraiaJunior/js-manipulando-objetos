@@ -14,14 +14,6 @@
         textoDoItem: '[data-js="texto"]',
     }
 
-    const mapeamentoDeEventos = {
-        [elementos.checkbox]: itemNaListaComprado,
-        [elementos.botaoDeletar]: deletarItem,
-        [elementos.botaoEditar]: editarItem,
-        [elementos.botaoSalvar]: salvarItemEditado,
-        [elementos.textoDoItem]: salvarItensPeloTeclado,
-    };
-
     const formulario = document.querySelector(elementos.formulario);
     const listaDeItens = document.querySelector(elementos.listaDeItens);
     const itensComprados = document.querySelector(elementos.itensComprados);
@@ -45,14 +37,8 @@
 
         const itemDeCompra = formulario.item.value.trim();
 
-        if (!itemDeCompra) {
-            alert('Campo não pode ser vazio');
-            formulario.item.focus();
-            return;
-        }
-
         if (verificaSeItemJaExiste(itemDeCompra)) {
-            alert(`O item "${itemDeCompra}" já está na lista`);
+            alert('Item já existe na lista');
             return;
         }
 
@@ -96,17 +82,14 @@
         const itemCriado = criarItem(item, indice);
         const idItem = itemCriado.getAttribute('data-value');
         selecionaListaParaItem(idItem, itemCriado)
-        adicionarEventosAoElemento(itemCriado);
+        adicionarEventosAoItem(itemCriado);
     }
 
 
-    function adicionarEventosAoElemento(itemCriado) {
-        Object.keys(mapeamentoDeEventos).forEach(seletor => {
-            const elemento = itemCriado.querySelector(seletor);
-            if (elemento) {
-                mapeamentoDeEventos[seletor](itemCriado);
-            }
-        });
+    function adicionarEventosAoItem(itemCriado) {
+
+        const eventos = [itemNaListaComprado, deletarItem, editarItem, salvarItemEditado, salvarItensPeloTeclado];
+        eventos.forEach(evento => evento(itemCriado));
     }
 
     function criarItem(item, indice) {
@@ -174,10 +157,24 @@
 
         checkboxItem.addEventListener('change', (evento) => {
             const idItem = obteridItem(evento);
+            verificaSeOCampoDeEdicaoEstaAberto(itemCriado, checkboxItem)
             itensParaComprar[idItem].checar = checkboxItem.checked;
             armazenarItemNoLocalStorage();
             selecionaListaParaItem(idItem, itemCriado)
         });
+    }
+
+    function verificaSeOCampoDeEdicaoEstaAberto(itemCriado, checkboxItem) {
+
+        const textoDoItem = itemCriado.querySelector(elementos.textoDoItem);
+        const campoEdicaoAberto = textoDoItem.contentEditable === 'true';
+
+        if (campoEdicaoAberto) {
+            checkboxItem = false;
+            return;
+        }
+
+        return true;
     }
 
     function deletarItem(itemCriado) {
@@ -210,7 +207,6 @@
         botaoEditar.addEventListener('click', () => {
             manipularBotoesEditarSalvar(itemCriado, true);
             alternarModoDeEdicao(itemCriado, true);
-            desabilitaCheckebox(itemCriado, true);
         });
     }
 
@@ -219,15 +215,9 @@
         const botaoSalvar = itemCriado.querySelector(elementos.botaoSalvar);
 
         botaoSalvar.addEventListener('click', (evento) => {
-
-            if (!verificaSeCampoItemEstaVazio(itemCriado)) {
-                return;
-            }
-
             atualizarItemDaLista(itemCriado, evento);
             manipularBotoesEditarSalvar(itemCriado, false);
             alternarModoDeEdicao(itemCriado, false);
-            desabilitaCheckebox(itemCriado, false);
         });
     }
 
@@ -241,25 +231,13 @@
 
             if (tecla === 'Enter') {
                 evento.preventDefault();
-
-                if (!verificaSeCampoItemEstaVazio(itemCriado)) {
-                    return;
-                }
-
                 atualizarItemDaLista(itemCriado, evento);
                 manipularBotoesEditarSalvar(itemCriado, false);
                 alternarModoDeEdicao(itemCriado, false)
-                desabilitaCheckebox(itemCriado, false);
 
             } else if (tecla === 'Escape') {
-
-                if (!verificaSeCampoItemEstaVazio(itemCriado)) {
-                    return;
-                }
-
                 manipularBotoesEditarSalvar(itemCriado, false);
                 alternarModoDeEdicao(itemCriado, false)
-                desabilitaCheckebox(itemCriado, false);
             }
         });
     }
@@ -267,7 +245,6 @@
     function atualizarItemDaLista(itemCriado, evento) {
         const idItem = obteridItem(evento);
         const textoDoItem = itemCriado.querySelector(elementos.textoDoItem);
-
         itensParaComprar[idItem].valor = textoDoItem.textContent;
         armazenarItemNoLocalStorage();
     }
@@ -297,26 +274,6 @@
         textoDoItem.removeAttribute('tabindex');
     }
 
-    function verificaSeCampoItemEstaVazio(itemCriado) {
-
-        const textoDoItem = itemCriado.querySelector(elementos.textoDoItem);
-
-        if (!textoDoItem.textContent) {
-            alert('Campo não pode ser vazio');
-            alternarModoDeEdicao(itemCriado, true);
-            desabilitaCheckebox(itemCriado, true);
-            return false;
-        }
-
-        return true;
-    }
-
-    function desabilitaCheckebox(itemCriado, editar) {
-
-        const checkbox = itemCriado.querySelector(elementos.checkbox);
-        checkbox.disabled = editar;
-    }
-
     function selecionaListaParaItem(idItem, itemCriado) {
 
         const estaComprado = itensParaComprar[idItem].checar;
@@ -337,8 +294,6 @@
         const botaoEditar = itemCriado.querySelector(elementos.botaoEditar);
 
         textoDoItem.classList.toggle('itens-comprados', estaComprado);
-        textoDoItem.classList.remove('editando');
-        textoDoItem.contentEditable = false;
         botaoEditar.classList.toggle('esconder', estaComprado);
         botaoSalvar.classList.add('esconder');
         checkbox.checked = estaComprado;

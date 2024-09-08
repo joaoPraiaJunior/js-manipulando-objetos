@@ -45,14 +45,8 @@
 
         const itemDeCompra = formulario.item.value.trim();
 
-        if (!itemDeCompra) {
-            alert('Campo não pode ser vazio');
-            formulario.item.focus();
-            return;
-        }
-
         if (verificaSeItemJaExiste(itemDeCompra)) {
-            alert(`O item "${itemDeCompra}" já está na lista`);
+            alert('Item já existe na lista');
             return;
         }
 
@@ -219,11 +213,6 @@
         const botaoSalvar = itemCriado.querySelector(elementos.botaoSalvar);
 
         botaoSalvar.addEventListener('click', (evento) => {
-
-            if (!verificaSeCampoItemEstaVazio(itemCriado)) {
-                return;
-            }
-
             atualizarItemDaLista(itemCriado, evento);
             manipularBotoesEditarSalvar(itemCriado, false);
             alternarModoDeEdicao(itemCriado, false);
@@ -241,22 +230,12 @@
 
             if (tecla === 'Enter') {
                 evento.preventDefault();
-
-                if (!verificaSeCampoItemEstaVazio(itemCriado)) {
-                    return;
-                }
-
                 atualizarItemDaLista(itemCriado, evento);
                 manipularBotoesEditarSalvar(itemCriado, false);
                 alternarModoDeEdicao(itemCriado, false)
                 desabilitaCheckebox(itemCriado, false);
 
             } else if (tecla === 'Escape') {
-
-                if (!verificaSeCampoItemEstaVazio(itemCriado)) {
-                    return;
-                }
-
                 manipularBotoesEditarSalvar(itemCriado, false);
                 alternarModoDeEdicao(itemCriado, false)
                 desabilitaCheckebox(itemCriado, false);
@@ -267,7 +246,6 @@
     function atualizarItemDaLista(itemCriado, evento) {
         const idItem = obteridItem(evento);
         const textoDoItem = itemCriado.querySelector(elementos.textoDoItem);
-
         itensParaComprar[idItem].valor = textoDoItem.textContent;
         armazenarItemNoLocalStorage();
     }
@@ -297,24 +275,15 @@
         textoDoItem.removeAttribute('tabindex');
     }
 
-    function verificaSeCampoItemEstaVazio(itemCriado) {
+    function desabilitaCheckebox(itemCriado, editar) {
+        const checkbox = itemCriado.querySelector(elementos.checkbox);
 
-        const textoDoItem = itemCriado.querySelector(elementos.textoDoItem);
-
-        if (!textoDoItem.textContent) {
-            alert('Campo não pode ser vazio');
-            alternarModoDeEdicao(itemCriado, true);
-            desabilitaCheckebox(itemCriado, true);
-            return false;
+        if (editar) {
+            checkbox.disabled = true;
+            return;
         }
 
-        return true;
-    }
-
-    function desabilitaCheckebox(itemCriado, editar) {
-
-        const checkbox = itemCriado.querySelector(elementos.checkbox);
-        checkbox.disabled = editar;
+        checkbox.disabled = false;
     }
 
     function selecionaListaParaItem(idItem, itemCriado) {

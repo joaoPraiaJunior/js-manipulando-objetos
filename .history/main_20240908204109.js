@@ -47,7 +47,7 @@
 
         if (!itemDeCompra) {
             alert('Campo não pode ser vazio');
-            formulario.item.focus();
+            formulario.item.fous();
             return;
         }
 

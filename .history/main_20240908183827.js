@@ -45,14 +45,8 @@
 
         const itemDeCompra = formulario.item.value.trim();
 
-        if (!itemDeCompra) {
-            alert('Campo não pode ser vazio');
-            formulario.item.focus();
-            return;
-        }
-
         if (verificaSeItemJaExiste(itemDeCompra)) {
-            alert(`O item "${itemDeCompra}" já está na lista`);
+            alert('Item já existe na lista');
             return;
         }
 
@@ -219,11 +213,7 @@
         const botaoSalvar = itemCriado.querySelector(elementos.botaoSalvar);
 
         botaoSalvar.addEventListener('click', (evento) => {
-
-            if (!verificaSeCampoItemEstaVazio(itemCriado)) {
-                return;
-            }
-
+            validaCampoItem(itemCriado);
             atualizarItemDaLista(itemCriado, evento);
             manipularBotoesEditarSalvar(itemCriado, false);
             alternarModoDeEdicao(itemCriado, false);
@@ -241,22 +231,15 @@
 
             if (tecla === 'Enter') {
                 evento.preventDefault();
-
-                if (!verificaSeCampoItemEstaVazio(itemCriado)) {
-                    return;
-                }
-
+                validaCampoItem(itemCriado);
                 atualizarItemDaLista(itemCriado, evento);
                 manipularBotoesEditarSalvar(itemCriado, false);
                 alternarModoDeEdicao(itemCriado, false)
                 desabilitaCheckebox(itemCriado, false);
 
             } else if (tecla === 'Escape') {
-
-                if (!verificaSeCampoItemEstaVazio(itemCriado)) {
-                    return;
-                }
-
+                evento.preventDefault();
+                validaCampoItem(itemCriado);
                 manipularBotoesEditarSalvar(itemCriado, false);
                 alternarModoDeEdicao(itemCriado, false)
                 desabilitaCheckebox(itemCriado, false);
@@ -267,7 +250,6 @@
     function atualizarItemDaLista(itemCriado, evento) {
         const idItem = obteridItem(evento);
         const textoDoItem = itemCriado.querySelector(elementos.textoDoItem);
-
         itensParaComprar[idItem].valor = textoDoItem.textContent;
         armazenarItemNoLocalStorage();
     }
@@ -302,13 +284,18 @@
         const textoDoItem = itemCriado.querySelector(elementos.textoDoItem);
 
         if (!textoDoItem.textContent) {
-            alert('Campo não pode ser vazio');
             alternarModoDeEdicao(itemCriado, true);
             desabilitaCheckebox(itemCriado, true);
             return false;
         }
 
         return true;
+    }
+
+    function validaCampoItem(itemCriado) {
+        if (!verificaSeCampoItemEstaVazio(itemCriado)) {
+            return;
+        }
     }
 
     function desabilitaCheckebox(itemCriado, editar) {
